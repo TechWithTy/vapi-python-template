@@ -1,42 +1,22 @@
-import requests
-import os
-import json
-from typing import Dict, Any
+from typing import Optional
+from ..client import get_client
+from vapi import SquadMemberDto
 
-# Retrieve API key from environment variables
-VAPI_API_KEY = os.getenv("VAPI_PRIVATE_KEY")
 
-def update_squad(squad_id: str, update_data: Dict[str, Any]) -> Dict[str, Any]:
+def update_squad(squad_id: str, members: list) -> Optional[dict]:
     """
-    Update a squad by ID using the VAPI AI API.
-    
-    :param squad_id: The ID of the squad to update.
-    :param update_data: Dictionary containing the squad update data.
-    :return: JSON response data from the API.
+    Update a squad using the Vapi SDK.
+
+    Args:
+        squad_id (str): The ID of the squad to update.
+        members (list): The list of squad members to update.
+
+    Returns:
+        Optional[dict]: The response from the API if successful, None otherwise.
     """
-    url = f"https://api.vapi.ai/squad/{squad_id}"
-    
-    headers = {
-        "Authorization": f"Bearer {VAPI_API_KEY}",
-        "Content-Type": "application/json"
-    }
-    
     try:
-        response = requests.patch(url, headers=headers, json=update_data)
-        
-        if not response.ok:
-            error_text = response.text
-            raise Exception(f"Error updating squad: {error_text}")
-            
-        updated_squad = response.json()
-        return updated_squad
-        
-    except Exception as err:
-        print("Error:", err)
-        raise err
-
-
-# Uncomment to run
-# updated_squad = update_squad(squad_id, update_data)
-# print("Updated Squad:", updated_squad)
-
+        client = get_client()
+        return client.squads.update(id=squad_id, members=[SquadMemberDto(**member) for member in members])
+    except Exception as e:
+        print(f"Error updating squad: {e}")
+        return None

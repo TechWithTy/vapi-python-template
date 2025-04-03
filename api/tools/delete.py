@@ -1,35 +1,24 @@
-import os
-import requests
-from typing import Dict, Any
+from vapi import Vapi
+from typing import Optional
+from ..client import get_client
 
-# Retrieve API key from environment variables
-VAPI_API_KEY = os.getenv("VAPI_PRIVATE_KEY")
 
-def delete_tool_by_id(tool_id: str) -> Dict[str, Any]:
+def delete_tool(tool_id: str) -> Optional[dict]:
     """
-    Delete a tool by ID using the VAPI AI API.
-    
-    :param tool_id: The ID of the tool to delete.
-    :return: JSON response data from the API.
+    Delete a tool using the Vapi SDK.
+
+    Args:
+        tool_id (str): The ID of the tool to delete.
+
+    Returns:
+        Optional[dict]: The response from the API if successful, None otherwise.
     """
-    url = f"https://api.vapi.ai/tool/{tool_id}"
-    
-    headers = {
-        "Authorization": f"Bearer {VAPI_API_KEY}",
-        "Content-Type": "application/json"
-    }
-    
     try:
-        response = requests.delete(url, headers=headers)
-        
-        if not response.ok:
-            error_text = response.text
-            raise Exception(f"Error deleting tool: {error_text}")
-            
-        response_data = response.json()
-        return response_data
-        
-    except Exception as err:
-        print("Error:", err)
-        raise err
+        client = get_client()
+        return client.tools.delete(id=tool_id)
+    except Exception as e:
+        print(f"Error deleting tool: {e}")
+        return None
 
+client = get_client()
+response = delete_tool("id")

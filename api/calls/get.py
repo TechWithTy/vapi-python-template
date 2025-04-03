@@ -1,32 +1,22 @@
-import os
-import requests
+from typing import Optional
+from ..client import get_client
 
-VAPI_API_KEY = os.getenv('VAPI_PRIVATE_KEY')  # Get API key from environment variable
 
-def get_call_by_id(call_id: str) -> dict:
+def get_call(call_id: str) -> Optional[dict]:
     """
-    Fetch call details by ID from the VAPI AI API.
+    Get a call using the Vapi SDK.
 
-    :param call_id: The ID of the call to fetch.
-    :return: JSON response data from the API or None if an error occurs.
+    Args:
+        call_id (str): The ID of the call to retrieve.
+
+    Returns:
+        Optional[dict]: The response from the API if successful, None otherwise.
     """
-    if not VAPI_API_KEY:
-        print("Error: Missing API key. Set VAPI_PRIVATE_KEY in your environment variables.")
-        return None
-
-    url = f"https://api.vapi.ai/call/{call_id}"
-    headers = {
-        "Authorization": f"Bearer {VAPI_API_KEY}",
-        "Content-Type": "application/json"
-    }
-
     try:
-        response = requests.get(url, headers=headers)
-        response.raise_for_status()  # Raise error for non-200 responses
-
-        call_data = response.json()
-        return call_data
-
-    except requests.exceptions.RequestException as err:
-        print("Error:", err)
+        client = get_client()
+        return client.calls.get(id=call_id)
+    except Exception as e:
+        print(f"Error getting call: {e}")
         return None
+
+get_call(call_id="id")

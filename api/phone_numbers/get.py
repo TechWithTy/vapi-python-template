@@ -1,34 +1,23 @@
-import requests
-import os
-from typing import Dict, Any, Optional
+from typing import Optional
+from ..client import get_client
 
-def get_phone_number_by_id(phone_number_id: str) -> Dict[str, Any]:
+def get_phone_number(phone_number_id: str) -> Optional[dict]:
     """
-    Fetch phone number details by ID using the VAPI AI API.
-    
-    :param phone_number_id: The ID of the phone number to fetch
-    :return: JSON response data from the API
+    Get a phone number using the Vapi SDK.
+
+    Args:
+        phone_number_id (str): The ID of the phone number to retrieve.
+
+    Returns:
+        Optional[dict]: The response from the API if successful, None otherwise.
     """
-    api_url = f'https://api.vapi.ai/phone-number/{phone_number_id}'
-    api_key = os.getenv('VAPI_PRIVATE_KEY')
-    
-    headers = {
-        'Authorization': f'Bearer {api_key}',
-        'Content-Type': 'application/json'
-    }
-    
     try:
-        response = requests.get(api_url, headers=headers)
-        
-        if not response.ok:
-            error_text = response.text
-            raise Exception(f'Error fetching phone number: {error_text}')
-            
-        response_data = response.json()
-        print('Phone number fetched successfully:', response_data)
-        
-        return response_data
-        
-    except Exception as error:
-        print('Error:', error)
-        raise error
+        client = get_client()
+        return client.phone_numbers.get(id=phone_number_id)
+    except Exception as e:
+        print(f"Error getting phone number: {e}")
+        return None
+
+# Example usage:
+phone_number_id = "id"
+response = get_phone_number(phone_number_id)

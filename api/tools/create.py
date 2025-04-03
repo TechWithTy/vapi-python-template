@@ -1,32 +1,21 @@
-import requests
-import json
-import os
+from typing import Optional
+from ..client import get_client
+from vapi import CreateDtmfToolDto
 
-# Retrieve API key from environment variables
-VAPI_API_KEY = os.getenv("VAPI_PRIVATE_KEY")
-VAPI_URL = "https://api.vapi.ai/tool"
 
-def create_tool(tool_data: dict) -> dict:
+def create_tool(payload: dict) -> Optional[dict]:
     """
-    Creates a tool on the VAPI platform.
+    Create a tool using the Vapi SDK.
 
-    :param tool_data: A dictionary containing the tool configuration.
-    :return: JSON response data from the API or None if an error occurs.
+    Args:
+        payload (dict): The tool configuration.
+
+    Returns:
+        Optional[dict]: The response from the API if successful, None otherwise.
     """
-    headers = {
-        "Authorization": f"Bearer {VAPI_API_KEY}",
-        "Content-Type": "application/json"
-    }
-
     try:
-        response = requests.post(VAPI_URL, headers=headers, json=tool_data)
-        response.raise_for_status()  # Raise error for non-200 responses
-        
-        response_data = response.json()
-        print("Tool created successfully:", json.dumps(response_data, indent=4))
-        return response_data
-
-    except requests.exceptions.RequestException as error:
-        print("Error creating tool:", error)
-        raise error
-
+        client = get_client()
+        return client.tools.create(request=CreateDtmfToolDto(**payload))
+    except Exception as e:
+        print(f"Error creating tool: {e}")
+        return None

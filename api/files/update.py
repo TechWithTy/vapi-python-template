@@ -1,23 +1,31 @@
-import os
-import requests
+from vapi import Vapi
+from typing import Optional
+from ..client import get_client
 
-def update_file(file_id, update_data):
-    api_key = os.getenv('VAPI_PRIVATE_KEY')
-    url = f"https://api.vapi.ai/file/{file_id}"
-    headers = {
-        "Authorization": f"Bearer {api_key}",
-        "Content-Type": "application/json"
-    }
-    
-    response = requests.patch(url, headers=headers, json=update_data)
-    
-    if response.status_code == 200:
-        return response.json()
-    else:
-        response.raise_for_status()
 
-# Example usage:
-# file_id = "your_file_id"
-# update_data = {"name": "new_file_name", "purpose": "new_purpose"}
-# updated_file = update_file(file_id, update_data)
-# print(updated_file)
+def update_file(file_id: str, update_data: dict) -> Optional[dict]:
+    """
+    Update a file using the Vapi SDK.
+
+    Args:
+        file_id (str): The ID of the file to update.
+        update_data (dict): The update configuration.
+
+    Returns:
+        Optional[dict]: The response from the API if successful, None otherwise.
+    """
+    try:
+        client = get_client()
+        return client.files.update(id=file_id, **update_data)
+    except Exception as e:
+        print(f"Error updating file: {e}")
+        return None
+
+# # Example usage:
+# client = Vapi(
+#     token="YOUR_TOKEN",
+# )
+# update_file(
+#     file_id="id",
+#     update_data={}
+# )

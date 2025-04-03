@@ -1,35 +1,28 @@
-import os
-import requests
-from typing import Dict, Any
+from vapi import Vapi
+from typing import Optional
+from ..client import get_client
 
-# Retrieve API key from environment variables
-VAPI_API_KEY = os.getenv("VAPI_PRIVATE_KEY")
 
-def update_tool_by_id(tool_id: str, update_data: Dict[str, Any]) -> Dict[str, Any]:
+def update_tool(tool_id: str, update_data: dict) -> Optional[dict]:
     """
-    Update a tool by ID using the VAPI AI API.
-    
-    :param tool_id: The ID of the tool to update.
-    :param update_data: Dictionary containing the fields to update.
-    :return: JSON response data from the API.
+    Update a tool using the Vapi SDK.
+
+    Args:
+        tool_id (str): The ID of the tool to update.
+        update_data (dict): The update configuration.
+
+    Returns:
+        Optional[dict]: The response from the API if successful, None otherwise.
     """
-    url = f"https://api.vapi.ai/tool/{tool_id}"
-    
-    headers = {
-        "Authorization": f"Bearer {VAPI_API_KEY}",
-        "Content-Type": "application/json"
-    }
-    
     try:
-        response = requests.patch(url, headers=headers, json=update_data)
-        
-        if not response.ok:
-            error_text = response.text
-            raise Exception(f"Error updating tool: {error_text}")
-            
-        response_data = response.json()
-        return response_data
-        
-    except Exception as err:
-        print("Error:", err)
-        raise err
+        client = get_client()
+        return client.tools.update(id=tool_id, **update_data)
+    except Exception as e:
+        print(f"Error updating tool: {e}")
+        return None
+
+# Example usage:
+client = Vapi(
+    token="YOUR_TOKEN",
+)
+update_tool("id", {})

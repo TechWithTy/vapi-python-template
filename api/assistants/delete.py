@@ -1,27 +1,23 @@
-import requests  # Make sure to import the requests library
-import os
-
-# Function to delete an assistant by ID
-def delete_assistant_by_id(assistant_id: str) -> None:
-    VAPI_URL = f'https://api.vapi.ai/assistant/{assistant_id}'  # Corrected URL
-    VAPI_API_KEY = os.getenv("VAPI_PRIVATE_KEY")
-
-    headers = {
-        "Authorization": f"Bearer {VAPI_API_KEY}",
-        "Content-Type": "application/json"
-    }
-
-    # Example query parameters (if needed)
-    params = {
-        'force': 'true'  # Example: Force deletion if applicable
-    }
-
-    response = requests.delete(VAPI_URL, headers=headers, params=params)
-
-    if response.status_code != 200:
-        error = response.text
-        raise Exception(f'Error deleting assistant: {error}')
-
-    print(f'Assistant with ID {assistant_id} deleted successfully.')
+from typing import Optional
+from ..client import get_client
 
 
+def delete_assistant(assistant_id: str) -> Optional[dict]:
+    """
+    Delete an assistant using the Vapi SDK.
+
+    Args:
+        assistant_id (str): The ID of the assistant to delete.
+
+    Returns:
+        Optional[dict]: The response from the API if successful, None otherwise.
+    """
+    try:
+        client = get_client()
+        return client.assistants.delete(id=assistant_id)
+    except Exception as e:
+        print(f"Error deleting assistant: {e}")
+        return None
+
+client = get_client()
+response = delete_assistant("id")

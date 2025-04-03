@@ -1,39 +1,27 @@
-import os
-import requests
-from typing import Dict, Any
+from vapi import Vapi
+from typing import Optional
+from ..client import get_client
 
-VAPI_API_KEY = os.getenv('VAPI_PRIVATE_KEY')
 
-def delete_file(file_id: str) -> Dict[str, Any]:
+def delete_file(file_id: str) -> Optional[dict]:
     """
-    Delete a file by ID using the VAPI AI API.
-    
-    :param file_id: The ID of the file to delete.
-    :return: JSON response data from the API.
+    Delete a file using the Vapi SDK.
+
+    Args:
+        file_id (str): The ID of the file to delete.
+
+    Returns:
+        Optional[dict]: The response from the API if successful, None otherwise.
     """
-    url = f"https://api.vapi.ai/file/{file_id}"
-    
-    headers = {
-        "Authorization": f"Bearer {VAPI_API_KEY}",
-        "Content-Type": "application/json"
-    }
-    
     try:
-        response = requests.delete(url, headers=headers)
-        
-        if not response.ok:
-            error_text = response.text
-            raise Exception(f"Error deleting file: {error_text}")
-            
-        response_data = response.json()
-        return response_data
-        
-    except Exception as err:
-        print("Error:", err)
-        raise err
+        client = get_client()
+        return client.files.delete(id=file_id)
+    except Exception as e:
+        print(f"Error deleting file: {e}")
+        return None
 
-# Example usage
-if __name__ == "__main__":
-    file_id = "your_file_id_here"
-    result = delete_file(file_id)
-    print(result)
+# # Example usage:
+# client = Vapi(
+#     token="YOUR_TOKEN",
+# )
+# delete_file("id")

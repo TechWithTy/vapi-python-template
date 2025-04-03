@@ -1,33 +1,26 @@
-import requests
-import json
-import os
+from vapi import SquadMemberDto
+from typing import Optional
+from ..client import get_client
 
-# Retrieve API key from environment variables
-VAPI_API_KEY = os.getenv("VAPI_PRIVATE_KEY")
-VAPI_URL = "https://api.vapi.ai/squad"
-
-def create_squad(payload: dict) -> dict:
+def create_squad(payload: dict) -> Optional[dict]:
     """
-    Creates a squad on the VAPI platform.
+    Create a squad using the Vapi SDK.
 
-    :param payload: A dictionary containing the squad configuration.
-    :return: JSON response data from the API or None if an error occurs.
+    Args:
+        payload (dict): The squad configuration.
+
+    Returns:
+        Optional[dict]: The response from the API if successful, None otherwise.
     """
-    headers = {
-        "Authorization": f"Bearer {VAPI_API_KEY}",
-        "Content-Type": "application/json",
-    }
-
     try:
-        response = requests.post(VAPI_URL, headers=headers, json=payload)
-        response.raise_for_status()  # Raise error for non-200 responses
-        data = response.json()
+        client = get_client()
+        return client.squads.create(**payload)
+    except Exception as e:
+        print(f"Error creating squad: {e}")
+        return None
 
-        print("Squad Created:", json.dumps(data, indent=4))
-        return data
-
-    except requests.exceptions.RequestException as err:
-        print("Error:", err)
-        raise err
-
-
+# # Example usage:
+# payload = {
+#     "members": [SquadMemberDto()],
+# }
+# response = create_squad(payload)

@@ -1,62 +1,24 @@
-import requests
-import os
-import json
-from typing import Dict, Any, Optional
+from typing import Optional
+from ..client import get_client
+from vapi import CreateByoPhoneNumberDto
 
-# API call to create a phone number
-def create_phone_number(
-    api_url: str, 
-    phone_number_request_data: Dict[str, Any]
-) -> Dict[str, Any]:
+
+def create_phone_number(payload: dict) -> Optional[dict]:
     """
-    Create a phone number using the VAPI AI API.
-    
-    :param api_url: The API URL endpoint for creating phone numbers
-    :param phone_number_request_data: Dictionary containing the phone number configuration
-    :return: JSON response data from the API
+    Create a phone number using the Vapi SDK.
+
+    Args:
+        payload (dict): The phone number configuration.
+
+    Returns:
+        Optional[dict]: The response from the API if successful, None otherwise.
     """
-    api_key = os.getenv('VAPI_PRIVATE_KEY')
-    
-    headers = {
-        'Authorization': f'Bearer {api_key}',
-        'Content-Type': 'application/json'
-    }
-    
     try:
-        response = requests.post(api_url, headers=headers, json=phone_number_request_data)
-        
-        if not response.ok:
-            error_text = response.text
-            raise Exception(f'Error creating phone number: {error_text}')
-            
-        response_data = response.json()
-        print('Phone number created successfully:', response_data)
-        
-        return response_data
-        
-    except Exception as error:
-        print('Error:', error)
-        raise error
+        client = get_client()
+        return client.phone_numbers.create(request=CreateByoPhoneNumberDto(**payload))
+    except Exception as e:
+        print(f"Error creating phone number: {e}")
+        return None
 
-# Example usage of the create_phone_number function
-api_url = 'https://api.vapi.ai/phone-number'
-
-phone_number_request_data = {
-    "fallbackDestination": {
-        "type": "number",
-        "numberE164CheckEnabled": True,
-        "number": "+14155551234",
-        "extension": "123",
-        "message": "This is a fallback message.",
-        "description": "Fallback description."
-    },
-    "provider": "byo_phone_number",
-    "numberE164CheckEnabled": True,
-    "number": "+14155551234",
-    "credentialId": "credential-id-123",
-    "name": "Test Phone Number",
-    "assistantId": "assistant-id-123",
-    "squadId": "squad-id-123",
-    "serverUrl": "https://server.url",
-    "serverUrlSecret": "server-secret-123"
-}
+# Example usage:
+create_phone_number(payload={"credential_id": "credentialId"})

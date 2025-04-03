@@ -1,52 +1,48 @@
-
-from typing import List, Dict, Any
 import os
+from typing import List, Dict, Any
+from . import get_client  # Importing the method to get the API client
 
-VAPI_API_KEY = os.getenv("VAPI_PRIVATE_KEY")
-
-# Import from the same directory
-from . import sync_voice_with_vapi, fetch_customer_voices
 
 def sync_customer_voice_with_vapi(customer_id: str, voice_id: str) -> None:
-    """
-    Sync the cloned voice with VAPI for the given customer
-    
+    """Sync the cloned voice with VAPI for the given customer.
+
     Args:
-        customer_id: The unique ID of the customer
-        voice_id: The cloned voice ID from ElevenLabs
-        
-    Returns:
-        None
-        
-    Raises: 
-        Exception: If the sync operation fails
+        customer_id (str): The unique ID of the customer.
+        voice_id (str): The cloned voice ID from ElevenLabs.
+
+    Raises:
+        Exception: If the sync operation fails.
     """
     try:
+        # Get the VAPI client
+        client = get_client()
         # Sync the cloned voice with VAPI
-        sync_voice_with_vapi(customer_id, voice_id)
+        client.sync_voice(customer_id, voice_id)  # Assuming sync_voice is a method in the SDK
         print(f"Successfully synced voice {voice_id} for customer {customer_id}")
     except Exception as error:
         print(f"Error syncing voice {voice_id} for customer {customer_id}: {error}")
-        raise Exception("Failed to sync voice with VAPI")
+        raise Exception("Failed to sync voice with VAPI") from error
+
 
 def get_customer_voices(customer_id: str) -> List[Dict[str, Any]]:
-    """
-    Fetch only the voices for the authenticated customer from VAPI
-    
+    """Fetch only the voices for the authenticated customer from VAPI.
+
     Args:
-        customer_id: The unique ID of the customer
-        
+        customer_id (str): The unique ID of the customer.
+
     Returns:
-        List of voice data for that customer
-        
+        List[Dict[str, Any]]: List of voice data for that customer.
+
     Raises:
-        Exception: If fetching voices fails
+        Exception: If fetching voices fails.
     """
     try:
+        # Get the VAPI client
+        client = get_client()
         # Fetch voices for this customer from VAPI
-        voices = fetch_customer_voices(customer_id)
+        voices = client.fetch_customer_voices(customer_id)  # Assuming fetch_customer_voices is a method in the SDK
         print(f"Fetched {len(voices)} voices for customer {customer_id}")
         return voices
     except Exception as error:
         print(f"Error fetching voices for customer {customer_id}: {error}")
-        raise Exception("Failed to fetch customer voices")
+        raise Exception("Failed to fetch customer voices") from error

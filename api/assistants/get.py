@@ -1,22 +1,20 @@
-import aiohttp
+from typing import Optional
+from ..client import get_client
 
-import os
-# Function to get an assistant by ID
-async def get_assistant_by_id(assistant_id: str):
-    VAPI_URL = f'https://api.vapi.ai/assistant/{assistant_id}'
-    VAPI_API_KEY = os.getenv("VAPI_PRIVATE_KEY")
 
-    headers = {
-        'Authorization': f'Bearer {VAPI_API_KEY}',
-        'Content-Type': 'application/json'
-    }
+def get_assistant(assistant_id: str) -> Optional[dict]:
+    """
+    Get an assistant using the Vapi SDK.
 
-    async with aiohttp.ClientSession() as session:
-        async with session.get(VAPI_URL, headers=headers) as response:
-            if response.status != 200:
-                error = await response.text()
-                raise Exception(f'Error fetching assistant: {error}')
-            
-            assistant = await response.json()
-            return assistant
+    Args:
+        assistant_id (str): The ID of the assistant to retrieve.
 
+    Returns:
+        Optional[dict]: The response from the API if successful, None otherwise.
+    """
+    try:
+        client = get_client()
+        return client.assistants.get(id=assistant_id)
+    except Exception as e:
+        print(f"Error getting assistant: {e}")
+        return None

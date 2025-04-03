@@ -1,80 +1,43 @@
-import requests
-import os
-
-# Base URL for VAPI API (replace with actual URL from VAPI docs)
-VAPI_BASE_URL = 'https://api.vapi.ai'
-
-# API key or token for VAPI API (replace with your actual API key/token)
-VAPI_API_KEY = os.getenv("VAPI_PRIVATE_KEY")
+from typing import List, Dict, Any
+from . import get_client
 
 def sync_voice_with_vapi(customer_id: str, voice_id: str) -> None:
     """
     Sync a cloned voice with VAPI.
-    
+
     Args:
-        customer_id: The unique ID of the customer
-        voice_id: The cloned voice ID from ElevenLabs
-        
-    Returns:
-        None
-    
+        customer_id (str): The unique ID of the customer.
+        voice_id (str): The cloned voice ID from ElevenLabs.
+
     Raises:
-        Exception: If the sync operation fails
+        Exception: If the sync operation fails.
     """
-    url = f"{VAPI_BASE_URL}/vapi/voices/sync"
-    
-    payload = {
-        "customerId": customer_id,
-        "voiceId": voice_id
-    }
-    
-    headers = {
-        "Authorization": f"Bearer {VAPI_API_KEY}",
-        "Content-Type": "application/json"
-    }
-    
     try:
-        response = requests.post(url, json=payload, headers=headers)
-        
-        if response.status_code in [200, 201]:
-            print(f"Voice ID {voice_id} synced successfully for customer {customer_id}")
-        else:
-            print(f"Failed to sync voice for customer {customer_id}: {response.reason}")
-            raise Exception(f"Failed to sync voice: {response.reason}")
+        client = get_client()
+        client.sync_voice(customer_id, voice_id)
+        print(f"Voice ID {voice_id} synced successfully for customer {customer_id}")
     except Exception as error:
         print(f"Error syncing voice with VAPI: {error}")
-        raise Exception("Sync with VAPI failed.")
+        raise Exception("Sync with VAPI failed.") from error
 
-def fetch_customer_voices(customer_id: str) -> list:
+def fetch_customer_voices(customer_id: str) -> List[Dict[str, Any]]:
     """
     Fetch all cloned voices for a specific customer from VAPI.
-    
+
     Args:
-        customer_id: The unique ID of the customer
-        
+        customer_id (str): The unique ID of the customer.
+
     Returns:
-        A list of voices for the customer
-        
+        List[Dict[str, Any]]: A list of voices for the customer.
+
     Raises:
-        Exception: If fetching voices fails
+        Exception: If fetching voices fails.
     """
-    url = f"{VAPI_BASE_URL}/vapi/voices/customer/{customer_id}"
-    
-    headers = {
-        "Authorization": f"Bearer {VAPI_API_KEY}",
-        "Content-Type": "application/json"
-    }
-    
     try:
-        response = requests.get(url, headers=headers)
-        
-        if response.status_code == 200:
-            voices = response.json().get("voices", [])
-            print(f"Fetched {len(voices)} voices for customer {customer_id}")
-            return voices
-        else:
-            print(f"Failed to fetch voices for customer {customer_id}: {response.reason}")
-            raise Exception(f"Failed to fetch voices: {response.reason}")
+        client = get_client()
+        voices = client.get_customer_voices(customer_id)
+        print(f"Fetched {len(voices)} voices for customer {customer_id}")
+        return voices
     except Exception as error:
         print(f"Error fetching customer voices from VAPI: {error}")
-        raise Exception("Fetch customer voices failed.")
+        raise Exception("Fetch customer voices failed.") from error

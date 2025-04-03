@@ -1,24 +1,16 @@
-import os
-import requests
+from typing import Optional, List
+from ..client import get_client
 
-def list_files():
-    api_key = os.getenv('VAPI_PRIVATE_KEY')
-    url = "https://api.vapi.ai/file"
-    headers = {
-        "Authorization": f"Bearer {api_key}"
-    }
+def list_files() -> Optional[List[dict]]:
+    """
+    List files using the Vapi SDK.
 
-    response = requests.get(url, headers=headers)
-    
-    if response.status_code == 200:
-        return response.json()
-    else:
-        response.raise_for_status()
-
-if __name__ == "__main__":
-    files = list_files()
-    for file in files:
-        print(f"File ID: {file['id']}")
-        print(f"Name: {file['name']}")
-        print(f"Status: {file['status']}")
-        print("---")
+    Returns:
+        Optional[List[dict]]: The response from the API if successful, None otherwise.
+    """
+    try:
+        client = get_client()
+        return client.files.list()
+    except Exception as e:
+        print(f"Error listing files: {e}")
+        return None
