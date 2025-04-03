@@ -1,6 +1,5 @@
 import aiohttp
-import asyncio
-import json
+
 import os
 # Function to get an assistant by ID
 async def get_assistant_by_id(assistant_id: str):

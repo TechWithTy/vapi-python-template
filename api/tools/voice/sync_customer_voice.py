@@ -1,6 +1,8 @@
-import requests
-import os
+
 from typing import List, Dict, Any
+import os
+
+VAPI_API_KEY = os.getenv("VAPI_PRIVATE_KEY")
 
 # Import from the same directory
 from . import sync_voice_with_vapi, fetch_customer_voices
@@ -16,7 +18,7 @@ def sync_customer_voice_with_vapi(customer_id: str, voice_id: str) -> None:
     Returns:
         None
         
-    Raises:
+    Raises: 
         Exception: If the sync operation fails
     """
     try:

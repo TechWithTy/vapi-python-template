@@ -1,13 +1,14 @@
 import requests  # Make sure to import the requests library
+import os
 
 # Function to delete an assistant by ID
 def delete_assistant_by_id(assistant_id: str) -> None:
     VAPI_URL = f'https://api.vapi.ai/assistant/{assistant_id}'  # Corrected URL
-    VAPI_API_KEY = '<YOUR_VAPI_API_KEY>'  # Replace with your actual API key
+    VAPI_API_KEY = os.getenv("VAPI_PRIVATE_KEY")
 
     headers = {
-        'Authorization': f'Bearer {VAPI_API_KEY}',
-        'Content-Type': 'application/json'
+        "Authorization": f"Bearer {VAPI_API_KEY}",
+        "Content-Type": "application/json"
     }
 
     # Example query parameters (if needed)

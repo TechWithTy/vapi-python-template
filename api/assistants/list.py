@@ -1,5 +1,4 @@
 import aiohttp
-import asyncio
 import os
 from typing import Optional
 
