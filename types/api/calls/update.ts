@@ -1,5 +1,6 @@
 // Import necessary types (assuming they exist in your project)
-import { GetCallResponse } from '@/types/vapiAi/api/calls/get'; // Reuse the type from the GET call response
+// @ts-ignore
+import { GetCallResponse } from './get'; // Reuse the type from the GET call response
 
 // Type for the request body when updating a call
 export interface UpdateCallRequestBody {

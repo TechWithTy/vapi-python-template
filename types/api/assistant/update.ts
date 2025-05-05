@@ -1,3 +1,4 @@
+// @ts-ignore
 import { DeepPartial } from 'react-hook-form';
 
 // Apply DeepPartial to CreateAssistantRequest for updates

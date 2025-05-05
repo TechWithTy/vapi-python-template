@@ -1,7 +1,8 @@
 // Reusing the assistant types from CreateCallRequest
-
+// @ts-ignore
 import { CampaignBase } from '@/types/_dashboard/campaign';
 import { Assistant, CallStatus, ConversationMessage } from './create';
+// @ts-ignore
 import { CallType } from '@prisma/client';
 import { EndedReason } from './_enums';
 

@@ -1,5 +1,5 @@
 // Import existing types
-import { GetCallResponse } from '@/types/vapiAi/api/calls/get';
+import { GetCallResponse } from './get';
 
 // Query parameters for listing calls
 export interface ListCallsQueryParams {
