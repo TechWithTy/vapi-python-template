@@ -60,7 +60,7 @@ export interface GetCallResponse {
   assistant?: Assistant; // Assistant data (reusing existing type)
 }
 
-export interface ghlCallResponseo extends GetCallResponse {
+export interface ghlCallResponse extends GetCallResponse {
   contactId: string; // Unique identifier for the contact associated with the call
   campaignId: string; // Unique identifier for the campaign associated with the call
 }
