@@ -1,3 +1,5 @@
+import asyncio
+
 from vapi import AsyncVapi
 import os
 
@@ -8,10 +10,10 @@ _client = None
 
 def initialize_client(token: str) -> None:
     global _client
-    _client = Vapi(token=token)
+    _client = AsyncVapi(token=token)
 
 
-def get_client() -> Vapi:
+def get_client() -> AsyncVapi:
     global _client
     if _client is None:
         if VAPI_PRIVATE_TOKEN is None:
